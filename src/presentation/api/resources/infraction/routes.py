@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List
+
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from src.application.infraction.usecase import InfractionUseCase
 from src.domain import PersonNotFound, VehicleNotFound
-from src.presentation.api.di.stub import infraction_usecase_stub
+from src.presentation.api.di.stub import infraction_usecase_stub, validate_token_stub
 from src.presentation.api.resources.commons.response_model import ResponseModel
 from src.presentation.api.resources.infraction.request_model import (
     InfractionCreateRequest,
@@ -17,6 +19,7 @@ infractions_router = APIRouter()
 def create_infraction_endpoint(
     infraction: InfractionCreateRequest,
     usecase: InfractionUseCase = Depends(infraction_usecase_stub),
+    valid_token: bool = Depends(validate_token_stub),
 ):
     try:
         usecase.create_infraction(infraction)
@@ -31,7 +34,7 @@ def create_infraction_endpoint(
 
 
 @infractions_router.get(
-    "/infractions/report", response_model=ResponseModel[InfractionResponse]
+    "/infractions/report", response_model=ResponseModel[List[InfractionResponse]]
 )
 def generate_infraction_report(
     email: str, usecase: InfractionUseCase = Depends(infraction_usecase_stub)

@@ -1,4 +1,6 @@
-from fastapi import Depends
+from fastapi import Depends, status
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from src.application.infraction.usecase import InfractionUseCase, InfractionUseCaseImpl
@@ -8,6 +10,10 @@ from src.infrastructure.database.repositories.infraction import InfractionReposi
 from src.infrastructure.database.repositories.officer import OfficerRepositoryImpl
 from src.infrastructure.database.repositories.person import PersonRepositoryImpl
 from src.infrastructure.database.repositories.vehicle import VehicleRepositoryImpl
+from src.presentation.api.resources.commons.response_model import ResponseModel
+from src.utils.jwt import verify_token
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_db() -> Session:
@@ -30,3 +36,20 @@ def infraction_usecase(db: Session = Depends(get_db)) -> InfractionUseCase:
 def officer_login_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
     officer_repository = OfficerRepositoryImpl(db)
     return OfficerUseCaseImpl(officer_repository)
+
+
+def validate_token(token: str = Depends(oauth2_scheme)):
+    if not token:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content=ResponseModel(
+                error=True, message="Token not provided", data={}
+            ).dict(),
+        )
+    try:
+        verify_token(token)
+    except Exception:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content=ResponseModel(error=True, message="Invalid token", data={}).dict(),
+        )
