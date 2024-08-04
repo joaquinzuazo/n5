@@ -1,0 +1,59 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # Backend hooks
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        files: src/
+        types: [file, python]
+
+  - repo: https://github.com/myint/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        args:
+          - --in-place
+          - --imports=sqlalchemy,pydantic
+        files: src/
+        types: [file, python]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+        files: src/
+        types: [file, python]
+        args: [-o, alembic, --src, "src"]
+        exclude: 'src/.*/__init__.py'
+      - id: isort
+        files: src/
+        name: isort (cython)
+        types: [cython]
+        exclude: 'src/.*/__init__.py'
+      - id: isort
+        files: src/
+        name: isort (pyi)
+        types: [pyi]
+        exclude: 'src/.*/__init__.py'
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.0
+    hooks:
+      - id: flake8
+        files: src/
+        exclude: ^src/infrastructure/database/alembic/env.py
+        # B008: Do not perform function calls in argument defaults. (FastAPI relies heavily on these)
+        # F401: Unused imports (kinda annoying, remove this rule if you want to enforce it)
+        args: [--max-line-length=132, --ignore, "B008,F401,W503,B017"]
+
+        types: [file, python]
+        additional_dependencies:
+          [flake8-comprehensions, flake8-bugbear, importlib_metadata<3.10.0]
