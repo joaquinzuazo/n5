@@ -1,11 +1,12 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.presentation.api.di import setup_di
-from fastapi.middleware.cors import CORSMiddleware
 from src.presentation.api.resources.commons.exceptions_handlers import (
     generic_exception_handler,
 )
-from src.presentation.api.resources.infraction.routes import router
+from src.presentation.api.resources.infraction.routes import infractions_router
+from src.presentation.api.resources.officer.routes import officer_router
 
 
 def create_app() -> FastAPI:
@@ -17,7 +18,8 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json",
     )
 
-    app.include_router(router)
+    app.include_router(infractions_router)
+    app.include_router(officer_router)
 
     app.add_exception_handler(Exception, generic_exception_handler)
 
@@ -32,5 +34,6 @@ def create_app() -> FastAPI:
     )
 
     return app
+
 
 app = create_app()

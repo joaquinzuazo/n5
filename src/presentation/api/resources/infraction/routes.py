@@ -10,10 +10,10 @@ from src.presentation.api.resources.infraction.request_model import (
 )
 from src.presentation.api.resources.infraction.response_model import InfractionResponse
 
-router = APIRouter()
+infractions_router = APIRouter()
 
 
-@router.post("/infractions/", response_model=ResponseModel)
+@infractions_router.post("/infractions/", response_model=ResponseModel)
 def create_infraction_endpoint(
     infraction: InfractionCreateRequest,
     usecase: InfractionUseCase = Depends(infraction_usecase_stub),
@@ -30,7 +30,9 @@ def create_infraction_endpoint(
         )
 
 
-@router.get("/infractions/report", response_model=ResponseModel[InfractionResponse])
+@infractions_router.get(
+    "/infractions/report", response_model=ResponseModel[InfractionResponse]
+)
 def generate_infraction_report(
     email: str, usecase: InfractionUseCase = Depends(infraction_usecase_stub)
 ):

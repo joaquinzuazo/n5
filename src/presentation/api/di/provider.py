@@ -2,8 +2,10 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from src.application.infraction.usecase import InfractionUseCase, InfractionUseCaseImpl
+from src.application.officer.usecase import OfficerUseCase, OfficerUseCaseImpl
 from src.infrastructure.database.config import SessionLocal
 from src.infrastructure.database.repositories.infraction import InfractionRepositoryImpl
+from src.infrastructure.database.repositories.officer import OfficerRepositoryImpl
 from src.infrastructure.database.repositories.person import PersonRepositoryImpl
 from src.infrastructure.database.repositories.vehicle import VehicleRepositoryImpl
 
@@ -23,3 +25,8 @@ def infraction_usecase(db: Session = Depends(get_db)) -> InfractionUseCase:
     return InfractionUseCaseImpl(
         infraction_repository, person_repository, vehicle_repository
     )
+
+
+def officer_login_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
+    officer_repository = OfficerRepositoryImpl(db)
+    return OfficerUseCaseImpl(officer_repository)

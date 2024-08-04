@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from src.domain import InfractionEntity, PersonEntity, VehicleEntity
+from src.domain import InfractionEntity, OfficerEntity, PersonEntity, VehicleEntity
 from src.infrastructure.database.config import Base
 
 
@@ -69,6 +69,23 @@ class OfficerModel(Base):
     name = Column(String, index=True)
     badge_number = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+
+    def to_entity(self) -> OfficerEntity:
+        return OfficerEntity(
+            id=self.id,
+            name=self.name,
+            badge_number=self.badge_number,
+            hashed_password=self.hashed_password,
+        )
+
+    @staticmethod
+    def from_entity(officer: OfficerEntity) -> "OfficerModel":
+        return OfficerModel(
+            id=officer.id,
+            name=officer.name,
+            badge_number=officer.badge_number,
+            hashed_password=officer.hashed_password,
+        )
 
 
 class InfractionModel(Base):

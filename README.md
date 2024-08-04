@@ -108,3 +108,12 @@ deactivate
 alembic revision --autogenerate -m "initial models"
 
 alembic upgrade head
+
+
+passwords = [
+    "password1",
+    "password2"
+]
+
+
+pre-commit run --all-files
