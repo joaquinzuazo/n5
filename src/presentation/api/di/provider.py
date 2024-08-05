@@ -1,5 +1,5 @@
 from fastapi import Depends, status
-from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
@@ -39,17 +39,14 @@ def officer_login_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
 
 
 def validate_token(token: str = Depends(oauth2_scheme)):
-    if not token:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content=ResponseModel(
-                error=True, message="Token not provided", data={}
-            ).dict(),
-        )
     try:
-        verify_token(token)
+        valid_token = verify_token(token)
+        if not valid_token:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
+            )
     except Exception:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content=ResponseModel(error=True, message="Invalid token", data={}).dict(),
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
         )
