@@ -1,6 +1,19 @@
 from pydantic import BaseModel
 
 
-class OfficierLogin(BaseModel):
+class OfficerBase(BaseModel):
+    badge_number: str
+
+
+class OfficerLogin(OfficerBase):
     badge_number: str
     password: str
+
+
+class OfficerCreate(OfficerBase):
+    name: str
+    password: str
+
+
+class OfficerUpdate(OfficerBase):
+    name: str

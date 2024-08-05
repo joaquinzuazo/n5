@@ -5,7 +5,10 @@ from fastapi.responses import JSONResponse
 
 from src.application.infraction.usecase import InfractionUseCase
 from src.domain import PersonNotFound, VehicleNotFound
-from src.presentation.api.di.stub import infraction_usecase_stub, validate_token_stub
+from src.presentation.api.di.stub import (
+    get_current_officer_stub,
+    infraction_usecase_stub,
+)
 from src.presentation.api.resources.commons.response_model import ResponseModel
 from src.presentation.api.resources.infraction.request_model import (
     InfractionCreateRequest,
@@ -19,7 +22,7 @@ infractions_router = APIRouter()
 def create_infraction_endpoint(
     infraction: InfractionCreateRequest,
     usecase: InfractionUseCase = Depends(infraction_usecase_stub),
-    valid_token: bool = Depends(validate_token_stub),
+    _: dict = Depends(get_current_officer_stub),
 ):
     try:
         usecase.create_infraction(infraction)

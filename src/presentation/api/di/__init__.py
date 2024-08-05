@@ -1,17 +1,17 @@
 from fastapi import FastAPI
 from src.presentation.api.di.provider import (
     infraction_usecase,
-    officer_login_usecase,
-    validate_token,
+    officer_usecase,
+    get_current_officer,
 )
 from src.presentation.api.di.stub import (
     infraction_usecase_stub,
-    officer_login_usecase_stub,
-    validate_token_stub,
+    officer_usecase_stub,
+    get_current_officer_stub,
 )
 
 
 def setup_di(app: FastAPI) -> None:
     app.dependency_overrides[infraction_usecase_stub] = infraction_usecase
-    app.dependency_overrides[officer_login_usecase_stub] = officer_login_usecase
-    app.dependency_overrides[validate_token_stub] = validate_token
+    app.dependency_overrides[officer_usecase_stub] = officer_usecase
+    app.dependency_overrides[get_current_officer_stub] = get_current_officer

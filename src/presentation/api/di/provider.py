@@ -33,18 +33,20 @@ def infraction_usecase(db: Session = Depends(get_db)) -> InfractionUseCase:
     )
 
 
-def officer_login_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
+def officer_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
     officer_repository = OfficerRepositoryImpl(db)
     return OfficerUseCaseImpl(officer_repository)
 
 
-def validate_token(token: str = Depends(oauth2_scheme)):
+def get_current_officer(token: str = Depends(oauth2_scheme)):
     try:
         valid_token = verify_token(token)
         if not valid_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
             )
+
+        return valid_token
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

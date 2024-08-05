@@ -81,7 +81,6 @@ class OfficerModel(Base):
     @staticmethod
     def from_entity(officer: OfficerEntity) -> "OfficerModel":
         return OfficerModel(
-            id=officer.id,
             name=officer.name,
             badge_number=officer.badge_number,
             hashed_password=officer.hashed_password,
