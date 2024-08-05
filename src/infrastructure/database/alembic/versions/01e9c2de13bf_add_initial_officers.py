@@ -20,9 +20,8 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.execute(
         """
-        INSERT INTO officers (id, name, badge_number, hashed_password) VALUES
-        (1, 'Nico Paz', '12345', '$2b$12$CoAqpJl5XHVizb5ApjtKHOijHH.RIIpR0RFyF5ucRen7TMOLOrbkS'),
-        (2, 'Leo Messi', '67890', '$2b$12$vV5GRy6xseu9RYQsr8meauqH6QKH8L6PXo0NJ3X6pWhYis5R31zMG')
+        INSERT INTO officers (id, name, badge_number, hashed_password, role) VALUES
+        (1, 'Leo Messi', '12345', '$2b$12$CoAqpJl5XHVizb5ApjtKHOijHH.RIIpR0RFyF5ucRen7TMOLOrbkS', 'ADMIN')
         """
     )
 

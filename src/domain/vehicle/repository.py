@@ -10,6 +10,14 @@ class VehicleRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def get_vehicles(self) -> list[VehicleEntity]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_vehicle_by_id(self, id: str) -> Optional[VehicleEntity]:
+        raise NotImplementedError()
+
+    @abstractmethod
     def create_vehicle(self, vehicle: VehicleEntity) -> VehicleEntity:
         raise NotImplementedError()
 
@@ -19,8 +27,4 @@ class VehicleRepository(ABC):
 
     @abstractmethod
     def delete_vehicle(self, id: str) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_vehicles(self) -> list[VehicleEntity]:
         raise NotImplementedError()

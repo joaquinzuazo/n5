@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from src.domain import (
     InfractionEntity,
     InfractionRepository,
-    PersonNotFound,
+    PersonEmailNotFound,
     PersonRepository,
     VehicleNotFound,
     VehicleRepository,
@@ -64,7 +64,8 @@ class InfractionUseCaseImpl(InfractionUseCase):
         try:
             person = self.person_repository.get_person_by_email(email)
             if not person:
-                raise PersonNotFound
+                raise PersonEmailNotFound
+
             infractions = self.infraction_repository.get_infractions_by_user_id(
                 person.id
             )

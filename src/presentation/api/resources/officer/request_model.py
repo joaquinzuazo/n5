@@ -13,6 +13,7 @@ class OfficerLogin(OfficerBase):
 class OfficerCreate(OfficerBase):
     name: str
     password: str
+    role: str
 
 
 class OfficerUpdate(OfficerBase):

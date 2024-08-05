@@ -1,8 +1,15 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+import enum
+
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from src.domain import InfractionEntity, OfficerEntity, PersonEntity, VehicleEntity
 from src.infrastructure.database.config import Base
+
+
+class RoleEnum(enum.Enum):
+    ADMIN = "ADMIN"
+    OFFICER = "OFFICER"
 
 
 class PersonModel(Base):
@@ -12,7 +19,9 @@ class PersonModel(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
 
-    vehicles = relationship("VehicleModel", back_populates="owner")
+    vehicles = relationship(
+        "VehicleModel", back_populates="owner", cascade="all, delete-orphan"
+    )
 
     def to_entity(self) -> PersonEntity:
         return PersonEntity(
@@ -37,10 +46,14 @@ class VehicleModel(Base):
     license_plate = Column(String, unique=True, index=True)
     brand = Column(String, index=True)
     color = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("people.id"))
+    owner_id = Column(
+        Integer, ForeignKey("people.id", ondelete="CASCADE"), nullable=False
+    )
 
     owner = relationship("PersonModel", back_populates="vehicles")
-    infractions = relationship("InfractionModel", back_populates="vehicle")
+    infractions = relationship(
+        "InfractionModel", back_populates="vehicle", cascade="all, delete-orphan"
+    )
 
     def to_entity(self) -> VehicleEntity:
         return VehicleEntity(
@@ -69,6 +82,7 @@ class OfficerModel(Base):
     name = Column(String, index=True)
     badge_number = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    role = Column(Enum(RoleEnum), default=RoleEnum.OFFICER)
 
     def to_entity(self) -> OfficerEntity:
         return OfficerEntity(
@@ -76,6 +90,7 @@ class OfficerModel(Base):
             name=self.name,
             badge_number=self.badge_number,
             hashed_password=self.hashed_password,
+            role=self.role.value,
         )
 
     @staticmethod
@@ -84,6 +99,7 @@ class OfficerModel(Base):
             name=officer.name,
             badge_number=officer.badge_number,
             hashed_password=officer.hashed_password,
+            role=RoleEnum(officer.role) if officer.role else RoleEnum.OFFICER,
         )
 
 
@@ -91,7 +107,9 @@ class InfractionModel(Base):
     __tablename__ = "infractions"
 
     id = Column(Integer, primary_key=True, index=True)
-    license_plate = Column(String, ForeignKey("vehicles.license_plate"), index=True)
+    license_plate = Column(
+        String, ForeignKey("vehicles.license_plate"), index=True, nullable=False
+    )
     timestamp = Column(DateTime)
     comments = Column(String)
 

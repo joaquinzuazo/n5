@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from src.domain import OfficerBadgeExists, OfficerNotFound
+from src.infrastructure.database.models.models import RoleEnum
 from src.presentation.api.di.stub import get_current_officer_stub, officer_usecase_stub
 from src.presentation.api.resources.commons.response_model import ResponseModel
 from src.presentation.api.resources.officer.request_model import (
@@ -37,8 +38,16 @@ def officer_login(
 def create_officer(
     data: OfficerCreate,
     usecase=Depends(officer_usecase_stub),
+    current_officer=Depends(get_current_officer_stub),
 ):
     try:
+        if RoleEnum(current_officer.role) != RoleEnum.ADMIN:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content=ResponseModel(
+                    error=True, message="Unauthorized", data={}
+                ).model_dump(),
+            )
         usecase.create_officer(data)
         return ResponseModel(
             error=False,

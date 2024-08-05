@@ -22,6 +22,24 @@ class OfficerUseCase(ABC):
     def login_officer(self, infraction: OfficerLogin) -> tuple:
         raise NotImplementedError()
 
+    @abstractmethod
+    def get_officer_by_badge(self, badge: str) -> OfficerEntity:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def create_officer(self, infraction: OfficerCreate) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def update_officer(
+        self, id: str, badge: str, update_officer: OfficerUpdate
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def delete_officer(self, id: str, badge: str) -> None:
+        raise NotImplementedError()
+
 
 class OfficerUseCaseImpl(OfficerUseCase):
     def __init__(
@@ -29,6 +47,14 @@ class OfficerUseCaseImpl(OfficerUseCase):
         officer_repository: OfficerRepository,
     ):
         self.officer_repository = officer_repository
+
+    def _generate_hashed_password(self, password: str) -> str:
+        try:
+            return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
+                "utf-8"
+            )
+        except Exception as e:
+            raise e
 
     def login_officer(self, data: OfficerLogin) -> tuple:
         try:
@@ -43,11 +69,13 @@ class OfficerUseCaseImpl(OfficerUseCase):
         except Exception as e:
             raise e
 
-    def _generate_hashed_password(self, password: str) -> str:
+    def get_officer_by_badge(self, badge: str) -> OfficerEntity:
         try:
-            return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
-                "utf-8"
-            )
+            officer = self.officer_repository.get_officer_by_badge(badge)
+            if not officer:
+                raise OfficerNotFound
+
+            return officer
         except Exception as e:
             raise e
 
@@ -63,6 +91,7 @@ class OfficerUseCaseImpl(OfficerUseCase):
                 badge_number=data.badge_number,
                 name=data.name,
                 hashed_password=hashed_password,
+                role=data.role,
             )
 
             self.officer_repository.create_officer(officer)

@@ -26,6 +26,12 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("badge_number", sa.String(), nullable=True),
         sa.Column("hashed_password", sa.String(), nullable=True),
+        sa.Column(
+            "role",
+            sa.Enum("ADMIN", "OFFICER", name="roleenum"),
+            nullable=False,
+            server_default="OFFICER",
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
@@ -49,11 +55,8 @@ def upgrade() -> None:
         sa.Column("license_plate", sa.String(), nullable=True),
         sa.Column("brand", sa.String(), nullable=True),
         sa.Column("color", sa.String(), nullable=True),
-        sa.Column("owner_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["owner_id"],
-            ["people.id"],
-        ),
+        sa.Column("owner_id", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(["owner_id"], ["people.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_vehicles_brand"), "vehicles", ["brand"], unique=False)
@@ -69,8 +72,7 @@ def upgrade() -> None:
         sa.Column("timestamp", sa.DateTime(), nullable=True),
         sa.Column("comments", sa.String(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["license_plate"],
-            ["vehicles.license_plate"],
+            ["license_plate"], ["vehicles.license_plate"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -102,4 +104,5 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_officers_id"), table_name="officers")
     op.drop_index(op.f("ix_officers_badge_number"), table_name="officers")
     op.drop_table("officers")
+    op.execute("DROP TYPE roleenum")
     # ### end Alembic commands ###

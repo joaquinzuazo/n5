@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session
 
 from src.application.infraction.usecase import InfractionUseCase, InfractionUseCaseImpl
 from src.application.officer.usecase import OfficerUseCase, OfficerUseCaseImpl
+from src.application.person.usecase import PersonUseCaseImpl
 from src.infrastructure.database.config import SessionLocal
 from src.infrastructure.database.repositories.infraction import InfractionRepositoryImpl
 from src.infrastructure.database.repositories.officer import OfficerRepositoryImpl
 from src.infrastructure.database.repositories.person import PersonRepositoryImpl
 from src.infrastructure.database.repositories.vehicle import VehicleRepositoryImpl
-from src.presentation.api.resources.commons.response_model import ResponseModel
 from src.utils.jwt import verify_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -38,7 +38,12 @@ def officer_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
     return OfficerUseCaseImpl(officer_repository)
 
 
-def get_current_officer(token: str = Depends(oauth2_scheme)):
+def person_usecase(db: Session = Depends(get_db)) -> PersonUseCaseImpl:
+    person_repository = PersonRepositoryImpl(db)
+    return PersonUseCaseImpl(person_repository)
+
+
+def get_token_payload(token: str = Depends(oauth2_scheme)):
     try:
         valid_token = verify_token(token)
         if not valid_token:
@@ -48,6 +53,23 @@ def get_current_officer(token: str = Depends(oauth2_scheme)):
 
         return valid_token
     except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+
+
+def get_current_officer(
+    token: dict = Depends(get_token_payload),
+    officer_usecase: OfficerUseCase = Depends(officer_usecase),
+):
+    try:
+        print(token)
+        badge = token.get("badge")
+        officer = officer_usecase.get_officer_by_badge(badge)
+        return officer
+    except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",

@@ -20,6 +20,17 @@ class VehicleRepositoryImpl(VehicleRepository):
             return None
         return vehicle.to_entity()
 
+    def get_vehicles(self) -> list[VehicleEntity]:
+        return [
+            vehicle.to_entity() for vehicle in self.session.query(VehicleModel).all()
+        ]
+
+    def get_vehicle_by_id(self, id: str) -> Optional[VehicleEntity]:
+        vehicle = self.session.query(VehicleModel).filter(VehicleModel.id == id).first()
+        if not vehicle:
+            return None
+        return vehicle.to_entity
+
     def create_vehicle(self, vehicle: VehicleEntity) -> VehicleEntity:
         vehicle_model = VehicleModel.from_entity(vehicle)
         self.session.add(vehicle_model)
@@ -41,8 +52,3 @@ class VehicleRepositoryImpl(VehicleRepository):
         vehicle = self.session.query(VehicleModel).filter(VehicleModel.id == id).first()
         self.session.delete(vehicle)
         self.session.commit()
-
-    def get_vehicles(self) -> list[VehicleEntity]:
-        return [
-            vehicle.to_entity() for vehicle in self.session.query(VehicleModel).all()
-        ]

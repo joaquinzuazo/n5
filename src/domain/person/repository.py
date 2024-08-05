@@ -10,6 +10,14 @@ class PersonRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def get_persons(self) -> list[PersonEntity]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_person_by_id(self, id: str) -> Optional[PersonEntity]:
+        raise NotImplementedError()
+
+    @abstractmethod
     def create_person(self, person: PersonEntity) -> PersonEntity:
         raise NotImplementedError()
 
@@ -19,8 +27,4 @@ class PersonRepository(ABC):
 
     @abstractmethod
     def delete_person(self, id: str) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_persons(self) -> list[PersonEntity]:
         raise NotImplementedError()
