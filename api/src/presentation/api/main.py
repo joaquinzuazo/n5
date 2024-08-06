@@ -12,7 +12,7 @@ from src.presentation.api.resources.vehicle.routes import vehicle_router
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Challenger n5",
+        title="Challenge n5",
         description="Sistema de registro de infracciones de tránsito",
         version="1.0.0",
         docs_url="/docs",

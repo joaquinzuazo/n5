@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from src.infrastructure.database.models.models import RoleEnum
 
 
 class OfficerBase(BaseModel):
@@ -13,7 +14,7 @@ class OfficerLogin(OfficerBase):
 class OfficerCreate(OfficerBase):
     name: str
     password: str
-    role: str
+    role: RoleEnum
 
 
 class OfficerUpdate(OfficerBase):
