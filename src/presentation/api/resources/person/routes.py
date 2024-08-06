@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from src.domain import PersonExists, PersonIDNotFound
 from src.presentation.api.di.stub import person_usecase_stub
 from src.presentation.api.resources.commons.response_model import ResponseModel
+from src.presentation.api.resources.officer.routes import get_current_officer_stub
 from src.presentation.api.resources.person.request_model import (
     PersonCreate,
     PersonUpdate,
@@ -18,6 +19,7 @@ person_router = APIRouter()
 @person_router.get("/person", response_model=ResponseModel[List[PersonReadModel]])
 def get_persons(
     person_usecase=Depends(person_usecase_stub),
+    _=Depends(get_current_officer_stub),
 ):
     try:
         list_person = person_usecase.get_persons()
@@ -37,6 +39,7 @@ def get_persons(
 def create_person(
     person: PersonCreate,
     person_usecase=Depends(person_usecase_stub),
+    _=Depends(get_current_officer_stub),
 ):
     try:
         person_usecase.create_person(person)
@@ -57,6 +60,7 @@ def update_person(
     id: int,
     person: PersonUpdate,
     person_usecase=Depends(person_usecase_stub),
+    _=Depends(get_current_officer_stub),
 ):
     try:
         person_usecase.update_person(id, person)
@@ -76,6 +80,7 @@ def update_person(
 def delete_person(
     id: str,
     person_usecase=Depends(person_usecase_stub),
+    _=Depends(get_current_officer_stub),
 ):
     try:
         person_usecase.delete_person(id)

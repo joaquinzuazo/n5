@@ -10,6 +10,6 @@ from .officer.exceptions import (
 )
 from .vehicle.entity import VehicleEntity
 from .vehicle.repository import VehicleRepository
-from .vehicle.exceptions import VehicleNotFound
+from .vehicle.exceptions import VehicleNotFound, VehicleAlreadyExists, OwnerIDNotFound
 from .infraction.entity import InfractionEntity
 from .infraction.repository import InfractionRepository

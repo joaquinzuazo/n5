@@ -61,7 +61,7 @@ class VehicleModel(Base):
             license_plate=self.license_plate,
             brand=self.brand,
             color=self.color,
-            owner=self.owner.to_entity() if self.owner else None,
+            owner_id=self.owner_id,
         )
 
     @staticmethod
@@ -71,7 +71,7 @@ class VehicleModel(Base):
             license_plate=vehicle.license_plate,
             brand=vehicle.brand,
             color=vehicle.color,
-            owner=PersonModel.from_entity(vehicle.owner) if vehicle.owner else None,
+            owner_id=vehicle.owner_id,
         )
 
 

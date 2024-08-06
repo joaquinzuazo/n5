@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from src.application.infraction.usecase import InfractionUseCase, InfractionUseCaseImpl
 from src.application.officer.usecase import OfficerUseCase, OfficerUseCaseImpl
-from src.application.person.usecase import PersonUseCaseImpl
+from src.application.person.usecase import PersonUseCase, PersonUseCaseImpl
+from src.application.vehicle.usecase import VehicleUseCase, VehicleUseCaseImpl
 from src.infrastructure.database.config import SessionLocal
 from src.infrastructure.database.repositories.infraction import InfractionRepositoryImpl
 from src.infrastructure.database.repositories.officer import OfficerRepositoryImpl
@@ -38,9 +39,15 @@ def officer_usecase(db: Session = Depends(get_db)) -> OfficerUseCase:
     return OfficerUseCaseImpl(officer_repository)
 
 
-def person_usecase(db: Session = Depends(get_db)) -> PersonUseCaseImpl:
+def person_usecase(db: Session = Depends(get_db)) -> PersonUseCase:
     person_repository = PersonRepositoryImpl(db)
     return PersonUseCaseImpl(person_repository)
+
+
+def vehicle_usecase(db: Session = Depends(get_db)) -> VehicleUseCase:
+    vehicle_repository = VehicleRepositoryImpl(db)
+    person_repository = PersonRepositoryImpl(db)
+    return VehicleUseCaseImpl(vehicle_repository, person_repository)
 
 
 def get_token_payload(token: str = Depends(oauth2_scheme)):

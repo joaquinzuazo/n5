@@ -8,6 +8,7 @@ from src.presentation.api.resources.commons.exceptions_handlers import (
 from src.presentation.api.resources.infraction.routes import infractions_router
 from src.presentation.api.resources.officer.routes import officer_router
 from src.presentation.api.resources.person.routes import person_router
+from src.presentation.api.resources.vehicle.routes import vehicle_router
 
 
 def create_app() -> FastAPI:
@@ -22,6 +23,7 @@ def create_app() -> FastAPI:
     app.include_router(infractions_router)
     app.include_router(officer_router)
     app.include_router(person_router)
+    app.include_router(vehicle_router)
 
     app.add_exception_handler(Exception, generic_exception_handler)
 
