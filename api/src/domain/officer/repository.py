@@ -12,6 +12,10 @@ class OfficerRepository(ABC):
     @abstractmethod
     def get_officer_by_id(self, id: str) -> Optional[OfficerEntity]:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def get_officers(self) -> list:
+        raise NotImplementedError()
 
     @abstractmethod
     def create_officer(self, officer: OfficerEntity) -> OfficerEntity:

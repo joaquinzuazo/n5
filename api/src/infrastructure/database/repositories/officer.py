@@ -24,6 +24,10 @@ class OfficerRepositoryImpl(OfficerRepository):
         if not officer:
             return None
         return officer.to_entity()
+    
+    def get_officers(self) -> list:
+        officers = self.session.query(OfficerModel).all()
+        return [officer.to_entity() for officer in officers]
 
     def create_officer(self, officer: OfficerEntity) -> OfficerEntity:
         officer_model = OfficerModel.from_entity(officer)

@@ -24,6 +24,10 @@ class OfficerUseCase(ABC):
     @abstractmethod
     def get_officer_by_badge(self, badge: str) -> OfficerEntity:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def get_officers(self) -> list:
+        raise NotImplementedError()
 
     @abstractmethod
     def create_officer(self, infraction: OfficerCreate) -> None:
@@ -75,6 +79,13 @@ class OfficerUseCaseImpl(OfficerUseCase):
                 raise OfficerNotFound
 
             return officer
+        except Exception as e:
+            raise e
+        
+    def get_officers(self) -> list:
+        try:
+            officers = self.officer_repository.get_officers()
+            return officers
         except Exception as e:
             raise e
 
