@@ -10,3 +10,8 @@ __pycache__
 *.pot
 *.po
 .env
+.dockerignore
+.git
+.gitignore
+Dockerfile
+README.md

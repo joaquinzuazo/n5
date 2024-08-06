@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
-from src.domain import OfficerBadgeExists, OfficerNotFound
+from src.domain import OfficerBadgeExists, OfficerNotFound, OfficerLoginNotFound
 from src.infrastructure.database.models.models import RoleEnum
 from src.presentation.api.di.stub import get_current_officer_stub, officer_usecase_stub
 from src.presentation.api.resources.commons.response_model import ResponseModel
@@ -26,7 +26,7 @@ def officer_login(
             message="Officer logged in successfully",
             data=Token(access_token=access_token, refresh_token=refresh_token),
         )
-    except OfficerNotFound as e:
+    except (OfficerNotFound, OfficerLoginNotFound) as e:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content=ResponseModel(error=True, message=str(e), data={}).model_dump(),
