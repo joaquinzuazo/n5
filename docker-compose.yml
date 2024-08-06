@@ -13,6 +13,8 @@ services:
     command: >
       sh -c "alembic upgrade head &&
              uvicorn src.presentation.api.main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - n5_net
 
   front:
     image: joaquinzuazo/n5_front:v1.0.0
@@ -20,6 +22,12 @@ services:
     environment:
       - BACKEND_URL=http://api:8000
     ports:
-      - "3000:3000"
+      - "3000:80"
     volumes:
       - ./front:/app
+    networks:
+      - n5_net
+
+networks:
+  n5_net:
+    driver: bridge

@@ -35,12 +35,12 @@ class OfficerUseCase(ABC):
 
     @abstractmethod
     def update_officer(
-        self, id: str, badge: str, update_officer: OfficerUpdate
+        self, id: str, update_officer: OfficerUpdate
     ) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def delete_officer(self, id: str, badge: str) -> None:
+    def delete_officer(self, id: str) -> None:
         raise NotImplementedError()
 
 
@@ -93,7 +93,7 @@ class OfficerUseCaseImpl(OfficerUseCase):
         try:
             officer = self.officer_repository.get_officer_by_badge(data.badge_number)
             if officer:
-                raise OfficerNotFound
+                raise OfficerBadgeExists
 
             hashed_password = self._generate_hashed_password(data.password)
             officer = OfficerEntity(
@@ -109,11 +109,11 @@ class OfficerUseCaseImpl(OfficerUseCase):
             raise e
 
     def update_officer(
-        self, id: str, badge: str, update_officer: OfficerUpdate
+        self, id: str, update_officer: OfficerUpdate
     ) -> None:
         try:
             officer = self.officer_repository.get_officer_by_id(id)
-            if not officer or not officer.badge_number == badge:
+            if not officer:
                 raise OfficerNotFound
 
             badge_exists = self.officer_repository.get_officer_by_badge(
@@ -126,10 +126,10 @@ class OfficerUseCaseImpl(OfficerUseCase):
         except Exception as e:
             raise e
 
-    def delete_officer(self, id: str, badge: str) -> None:
+    def delete_officer(self, id: str) -> None:
         try:
             officer = self.officer_repository.get_officer_by_id(id)
-            if not officer or not officer.badge_number == badge:
+            if not officer:
                 raise OfficerNotFound
 
             self.officer_repository.delete_officer(id)

@@ -14,6 +14,5 @@ export const login = async (badge_number, password) => {
   }
 
   const data = await response.json();
-  console.log(data.data)
   return data.data;
 };

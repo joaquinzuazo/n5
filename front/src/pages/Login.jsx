@@ -24,9 +24,9 @@ const Login = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Username: </label>
+          <label>Numero de insignia: </label>
           <input
-            type="text"
+            type="number"
             value={badge}
             onChange={(e) => setBadge(e.target.value)}
           />

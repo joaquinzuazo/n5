@@ -80,7 +80,7 @@ def create_officer(
             message="Officer created successfully",
             data=[],
         )
-    except OfficerNotFound as e:
+    except OfficerBadgeExists as e:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content=ResponseModel(error=True, message=str(e), data={}).model_dump(),
@@ -102,8 +102,7 @@ def update_officer(
                     error=True, message="Unauthorized", data={}
                 ).model_dump(),
             )
-        badge = current_officer.get("badge")
-        usecase.update_officer(id=id, badge=badge, update_officer=data)
+        usecase.update_officer(id=id, update_officer=data)
         return ResponseModel(
             error=False,
             message="Officer updated successfully",
@@ -130,8 +129,7 @@ def delete_officer(
                     error=True, message="Unauthorized", data={}
                 ).model_dump(),
             )
-        badge = current_officer.get("badge")
-        usecase.delete_officer(id=id, badge=badge)
+        usecase.delete_officer(id=id)
         return ResponseModel(
             error=False,
             message="Officer deleted successfully",

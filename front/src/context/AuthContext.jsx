@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setRefreshToken(null);
-    navigate('/login');
+    navigate('/');
   };
 
   return (
